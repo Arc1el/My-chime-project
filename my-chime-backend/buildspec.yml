@@ -4,7 +4,7 @@ phases:
   install:
     commands:
       - node -v
-      - cd my-chime-frontend
+      - cd my-chime-backend
       # install dependencies
       - npm install # or any other package manager command
   
@@ -23,7 +23,7 @@ phases:
   post_build:
     commands:
       - echo "Running post-build actions..."
-      - printf '[{"name":"hmkim-cube","imageUri":"%s"}]' ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG} > imagedefinitions.json
+      - printf '[{"name":"hmkim-project-front","imageUri":"%s"}]' ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG} > imagedefinitions.json
       - ls -al
   
 artifacts:
