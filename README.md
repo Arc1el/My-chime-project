@@ -1,2 +1,3 @@
 # My-chime-project
-My chime project repo
+
+<img src="project_architecture.png">
