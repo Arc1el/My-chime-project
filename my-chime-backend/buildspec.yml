@@ -23,8 +23,8 @@ phases:
   post_build:
     commands:
       - echo "Running post-build actions..."
-      - printf '[{"name":"hmkim-project-front","imageUri":"%s"}]' ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG} > imagedefinitions.json
+      - printf '[{"name":"hmkim-project-backend","imageUri":"%s"}]' ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG} > imagedefinitions.json
       - ls -al
   
 artifacts:
-  files: eks-test/imagedefinitions.json
+  files: imagedefinitions.json
