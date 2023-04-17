@@ -7,6 +7,10 @@ phases:
       - cd my-chime-backend
       # install dependencies
       - npm install # or any other package manager command
+      - AWS_REGION
+      - AWS_ACCOUNT_ID
+      - IMAGE_NAME
+      - IMAGE_TAG
   
   pre_build:
     commands:
