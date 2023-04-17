@@ -16,17 +16,6 @@ SHELL := /bin/bash
 all: build_upload
 
 build_upload:
-	
-	# ECR URI 포맷을 테스트하기 위한 정규식
-	# regex for valid ecr uri format
-	@REGEX='^[0-9]{12}\.dkr\.ecr\..+\.amazonaws\.com\/[a-z0-9_/-]+$$'; \
-
-	if [[ $(ECR_REPO_URI) =~ $$REGEX ]]; then \
-		echo "ECR URI 포맷 검사 통과"; else \
-		echo "ECR URI 포맷 검사 실패"; \
-		exit 1; \
-	fi
-
 	# ECR 로그인
 	# ecr login
 	aws ecr get-login-password --region $(REGION) | docker login --username AWS --password-stdin $(ECR_REPO_URI)
