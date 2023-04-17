@@ -12,10 +12,10 @@ RUN /usr/bin/apt-get update && \
 	/usr/bin/apt-get upgrade -y && \
 	/usr/bin/apt-get install -y nodejs pulseaudio xvfb firefox ffmpeg xdotool unzip
 
-COPY /recording /recording
-WORKDIR /recording
+COPY /source /source
+WORKDIR /source
 RUN /usr/bin/npm install && \
-	chmod +x /recording/run.sh && \
-	chmod +x /recording/record.js
+	chmod +x /source/run.sh && \
+	chmod +x /source/record.js
 
-ENTRYPOINT ["/recording/run.sh"]
+ENTRYPOINT ["/source/run.sh"]
