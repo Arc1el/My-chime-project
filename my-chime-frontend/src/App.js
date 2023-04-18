@@ -116,11 +116,13 @@ async function createMeetingSession({ room }) {
 
 function MainHeader() {
   return (
-    <Box component="header" textAlign="center">
-      <Typography component="h1" variant="h4">
-        Simple Amazon Chime SDK App
-      </Typography>
-    </Box>
+    <Container maxWidth="xs">
+      <Box component="header" textAlign="center">
+        <Typography component="h1" variant="h4">
+          <img src="SmileShark_Logo_horizontal.png" width="100%"></img>
+        </Typography>
+      </Box>
+    </Container>
   );
 }
 
@@ -136,22 +138,32 @@ function MainJoiningMeeting({ onJoin }) {
 
   return (
     <Container component="main" maxWidth="xs">
-      <Typography component="p" variant="body1" marginTop="10px">
-        Start or join a conference room.
+      <Typography component="p" variant="body1" marginTop="10px" fontSize="12px" align="right">
+        시작하거나 회의실에 JOIN 해주세요.
       </Typography>
       <Box component="form" onSubmit={handleSubmit}>
         <TextField
           name="room"
-          label="Conference room"
-          placeholder="Enter any alphanumeric id..."
+          label="회의실이름"
+          placeholder="공란으로 두지 마세요"
           maxLength="64"
           minLength="2"
           margin="normal"
           fullWidth
           required
         />
-        <Button type="submit" variant="contained" fullWidth>
-          Start call
+        <Button type="submit"
+         variant="contained" 
+         fullWidth
+         style={{
+          borderRadius: 5,
+          backgroundColor: "#1e62a5",
+          width: "100%",
+          fontSize: "10px",
+          boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 2px 2px rgba(0,0,0,0.23)"
+        }}
+         >
+          회의 시작
         </Button>
       </Box>
     </Container>
@@ -160,16 +172,25 @@ function MainJoiningMeeting({ onJoin }) {
 
 function Controls({ meetingSession }) {
   return (
-    <Box component="section">
-      <h3>Controls</h3>
-      <Button
-        type="button"
-        color="error"
-        onClick={() => meetingSession.audioVideo.stop()}
-      >
-        Stop call
-      </Button>
-    </Box>
+    <Container component="main" maxWidth="xs">
+      <Box component="section" textAlign="center" maxWidth="xs">
+        <Button
+          type="button"
+          style={{
+            borderRadius: 5,
+            backgroundColor: "#1e62a5",
+            width: "100%",
+            fontSize: "10px",
+            color: "white",
+            boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 2px 2px rgba(0,0,0,0.23)",
+            marginTop: "5px"
+          }}
+          onClick={() => meetingSession.audioVideo.stop()}
+        >
+          회의 종료
+        </Button>
+      </Box>
+    </Container>
   );
 }
 
@@ -198,8 +219,8 @@ function VideoLocalOutput({ meetingSession }) {
     meetingSession.audioVideo.startLocalVideoTile();
   }, [meetingSession]);
   return (
-    <Box component="section">
-      <h3>Video Local Output</h3>
+    <Box component="section" textAlign="center">
+      
       <PeerBox enabled>
         <Video ref={videoRef} />
       </PeerBox>
@@ -232,12 +253,11 @@ function VideoRemoteOutput({ meetingSession }) {
       },
     };
     meetingSession.audioVideo.addObserver(observer);
-  }, [meetingSession]);
+  }, [meetingSession]); 
   return (
-    <Box component="section">
-      <h3>Video Remote Output</h3>
+    <Box component="section" textAlign="center">
       <PeerBox enabled>
-        <Video ref={videoRef} />
+        <Video ref={videoRef} width="100%"/>
       </PeerBox>
     </Box>
   );
@@ -246,10 +266,12 @@ function VideoRemoteOutput({ meetingSession }) {
 const PeerBox = ({ enabled, ...props }) => (
   <Box
     display={enabled ? 'inline-block' : 'none'}
-    width="200px"
-    height="150px"
+    width="400px"
+    height="200px"
     backgroundColor="black"
     margin="10px"
+    borderRadius="5px"
+    boxShadow="0 10px 20px rgba(0,0,0,0.19), 0 2px 2px rgba(0,0,0,0.23)"
     {...props}
   />
 );
