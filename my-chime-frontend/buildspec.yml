@@ -4,7 +4,7 @@ phases:
   install:
     commands:
       - node -v
-      - cd my-chime-backend
+      - cd my-chime-frontend
       - pwd
       # install dependencies
       - npm install # or any other package manager command
