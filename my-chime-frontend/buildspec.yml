@@ -5,7 +5,6 @@ phases:
     commands:
       - node -v
       - cd my-chime-frontend
-      - pwd
       # install dependencies
       - npm install # or any other package manager command
   
@@ -13,8 +12,8 @@ phases:
     commands:
       # ecr login
       - aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
-
-  build:
+    
+  build:  
     commands:
       # image build
       - docker build -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG} .
@@ -24,8 +23,8 @@ phases:
   post_build:
     commands:
       - echo "Running post-build actions..."
-      - printf '[{"name":"hmkim-cube","imageUri":"%s"}]' ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG} > imagedefinitions.json
+      - printf '[{"name":"hmkim-project-frontend","imageUri":"%s"}]' ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG} > imagedefinitions.json
       - ls -al
   
 artifacts:
-  files: eks-test/imagedefinitions.json
+  files: my-chime-frontend/imagedefinitions.json
