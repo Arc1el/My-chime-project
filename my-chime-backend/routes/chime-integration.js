@@ -11,25 +11,8 @@ module.exports = async function (fastify, opts) {
       const chime = new AWS.ChimeSDKMeetings({ region: 'us-east-1' });
       chime.endpoint = new AWS.Endpoint('https://service.chime.aws.amazon.com');
 
-      // Get a temporary security credentials with AssumeRole API
-      const sts = new AWS.STS();
-      const roleArn = 'arn:aws:iam::759320821027:user/chime-sts-user';
-      const roleSessionName = 'chime-demo-session';
-      const assumeRoleResult = await sts.assumeRole({
-        RoleArn: roleArn,
-        RoleSessionName: roleSessionName,
-      }).promise();
-
-      // Get Meetings list using REST API
-      const meetingsEndpoint = chime.endpoint.href + '/meetings?max-results=100';
-      const response = await fetch(meetingsEndpoint, {
-        method: 'GET',
-        headers: {
-          'x-amz-chime-bearer': assumeRoleResult.Credentials.SessionToken,
-        },
-      });
-      const meetingsResult = await response.json();
-
+      // Retrieve Meetings list
+      const meetingsResult = await chime.listMeetings().promise();
 
       // Can find a Meeting with a specific “external id” (aka, “room”)?
       const foundMeeting = Array.from(meetingsResult.Meetings).find(
