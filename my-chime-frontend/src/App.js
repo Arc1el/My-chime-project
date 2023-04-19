@@ -138,7 +138,7 @@ function MainJoiningMeeting({ onJoin }) {
 
   return (
     <Container component="main" maxWidth="xs">
-      <Typography component="p" variant="body1" marginTop="10px" fontSize="12px" align="right">
+      <Typography component="p" variant="body1" marginTop="0px" fontSize="12px" align="right">
         시작하거나 회의실에 JOIN 해주세요.
       </Typography>
       <Box component="form" onSubmit={handleSubmit}>
@@ -156,8 +156,9 @@ function MainJoiningMeeting({ onJoin }) {
          variant="contained" 
          fullWidth
          style={{
+          marginTop: "5px",
           borderRadius: 5,
-          backgroundColor: "#1e62a5",
+          backgroundColor: "#265e9a",
           width: "100%",
           fontSize: "10px",
           boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 2px 2px rgba(0,0,0,0.23)"
@@ -173,17 +174,17 @@ function MainJoiningMeeting({ onJoin }) {
 function Controls({ meetingSession }) {
   return (
     <Container component="main" maxWidth="xs">
-      <Box component="section" textAlign="center" maxWidth="xs">
+      <Box component="section" textAlign="center" maxWidth="xs" marginBottom="5px">
         <Button
           type="button"
           style={{
             borderRadius: 5,
-            backgroundColor: "#1e62a5",
+            backgroundColor: "#265e9a",
             width: "100%",
             fontSize: "10px",
             color: "white",
             boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 2px 2px rgba(0,0,0,0.23)",
-            marginTop: "5px"
+            marginTop: "10px"
           }}
           onClick={() => meetingSession.audioVideo.stop()}
         >
@@ -281,7 +282,7 @@ const Video = forwardRef((props, ref) => (
     ref={ref}
     width="100%"
     height="100%"
-    style={{ objectFit: 'cover' }}
+    style={{ objectFit: 'cover', borderRadius: "5px" }}
     {...props}
   />
 ));
