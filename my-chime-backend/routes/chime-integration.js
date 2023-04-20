@@ -8,7 +8,7 @@ module.exports = async function (fastify, opts) {
     async function (request, reply) {
 
       // Initialize Chime instance
-      const chime = new AWS.ChimeSDKMeetings({ region: 'us-east-1' });
+      const chime = new AWS.Chime({ region: 'us-east-1' });
       chime.endpoint = new AWS.Endpoint('https://service.chime.aws.amazon.com');
 
       // Retrieve Meetings list
