@@ -8,7 +8,6 @@ var webRTCRouter = require('./routes/webrtc');
 var indexRouter = require("./routes/index")
 
 var cors = require('cors');
-
 var app = express();
 
 // view engine setup

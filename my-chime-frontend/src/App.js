@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { forwardRef, useEffect, useState, useRef } from "react";
