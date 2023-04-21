@@ -6,6 +6,8 @@
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
+    "@aws-sdk/client-chime-sdk-meetings": "^3.317.0",
+    "asyncify-express": "^0.0.0",
     "aws-sdk": "^2.1361.0",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",

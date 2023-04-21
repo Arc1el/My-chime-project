@@ -98,7 +98,12 @@ async function createMeetingSession({ room }) {
   const response = await axios.get("/chime-integration/meeting-session", {
     params,
   });
-  const { meetingResponse, attendeeResponse } = response.data;
+  console.log(response.data);
+
+  const meetingResponse = response.data.meeting_response;
+  const attendeeResponse = response.data.attendee_response;
+
+  // const { meetingResponse, attendeeResponse } = response.data;
 
   const configuration = new MeetingSessionConfiguration(
     meetingResponse,
