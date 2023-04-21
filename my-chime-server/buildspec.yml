@@ -27,4 +27,4 @@ phases:
       - ls -al
   
 artifacts:
-  files: my-chime-frontend/imagedefinitions.json
+  files: my-chime-server/imagedefinitions.json
