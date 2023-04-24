@@ -1,0 +1,26 @@
+{
+	"Version": "2012-10-17",
+	"Id": "AWSChimeMediaCaptureBucketPolicy",
+	"Statement": [
+		{
+			"Sid": "AWSChimeMediaCaptureBucketPolicy",
+			"Effect": "Allow",
+			"Principal": {
+				"Service": "mediapipelines.chime.amazonaws.com"
+			},
+			"Action": [
+				"s3:PutObject",
+				"s3:PutObjectAcl"
+			],
+			"Resource": "arn:aws:s3:::chime-record-hmkim/*",
+			"Condition": {
+				"StringEquals": {
+					"aws:SourceAccount": ""
+				},
+				"ArnLike": {
+					"aws:SourceArn": "arn:aws:chime:*::*"
+				}
+			}
+		}
+	]
+}
