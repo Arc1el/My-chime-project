@@ -6,6 +6,7 @@
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
+    "@aws-sdk/client-chime-sdk-media-pipelines": "^3.317.0",
     "@aws-sdk/client-chime-sdk-meetings": "^3.317.0",
     "asyncify-express": "^0.0.0",
     "aws-sdk": "^2.1361.0",
