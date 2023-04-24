@@ -174,9 +174,9 @@ function MainJoiningMeeting({ onJoin }) {
           required
         />
         <Button type="submit"
-         variant="contained" 
-         fullWidth
-         style={{
+          variant="contained" 
+          fullWidth
+          style={{
           marginTop: "5px",
           borderRadius: 5,
           backgroundColor: "#265e9a",
@@ -184,12 +184,23 @@ function MainJoiningMeeting({ onJoin }) {
           fontSize: "10px",
           boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 2px 2px rgba(0,0,0,0.23)"
         }}
-         >
+          >
           회의 시작
         </Button>
       </Box>
     </Container>
   );
+}
+
+async function storeS3request(meetingSession) {
+  console.log("s3 meeting id", meetingSession._configuration.meetingId);
+  const params = {
+    meetingId : meetingSession._configuration.meetingId
+  }
+  const response = await axios.post("/store_s3", params);
+
+  // print response
+  console.log(response.data);
 }
 
 function Controls({ meetingSession }) {
@@ -200,8 +211,8 @@ function Controls({ meetingSession }) {
           type="button"
           style={{
             borderRadius: 5,
-            backgroundColor: "#265e9a",
-            width: "100%",
+            backgroundColor: "#8B0000",
+            width: "50%",
             fontSize: "10px",
             color: "white",
             boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 2px 2px rgba(0,0,0,0.23)",
@@ -211,50 +222,20 @@ function Controls({ meetingSession }) {
         >
           회의 종료
         </Button>
-      </Box>
-
-      <Box component="section" textAlign="center" maxWidth="xs" marginBottom="5px">
         <Button
           type="button"
           style={{
             borderRadius: 5,
-            backgroundColor: "#265e9a",
+            backgroundColor: "#006400",
             fontSize: "10px",
+            "width": "50%",
             color: "white",
             boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 2px 2px rgba(0,0,0,0.23)",
             marginTop: "10px"
           }}
-          onClick={() => function(){}}
+          onClick={() => storeS3request(meetingSession)}
         >
           S3에 비디오 저장
-        </Button>
-        <Button
-          type="button"
-          style={{
-            borderRadius: 5,
-            backgroundColor: "#265e9a",
-            fontSize: "10px",
-            color: "white",
-            boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 2px 2px rgba(0,0,0,0.23)",
-            marginTop: "10px"
-          }}
-          onClick={() => function(){}}
-        >
-          잡음제거
-        </Button>
-        <Button
-          type="button"
-          style={{
-            borderRadius: 5,
-            backgroundColor: "#265e9a",
-            fontSize: "10px",
-            color: "white",
-            boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 2px 2px rgba(0,0,0,0.23)",
-            marginTop: "10px"
-          }}
-          onClick={() => function(){}}
-        >
-          Transcript
         </Button>
       </Box>
     </Container>
