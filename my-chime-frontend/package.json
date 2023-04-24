@@ -26,6 +26,7 @@
     "eject": "react-scripts eject"
   },
   "proxy": "http://mychimealb-1833942194.ap-northeast-2.elb.amazonaws.com:3001/",
+  "_comment": "http://localhost:3001/",
   "eslintConfig": {
     "extends": [
       "react-app",
