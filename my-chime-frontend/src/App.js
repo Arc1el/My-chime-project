@@ -12,24 +12,29 @@ import axios from "axios";
 const logger = new ConsoleLogger("Logger", LogLevel.INFO);
 const deviceController = new DefaultDeviceController(logger);
 
-
 function App() {
+  // 세션 생성
   const [meetingSession, setMeetingSession] = useState(null);
   const [hasStartedMediaInputs, setStartedMediaInputs] = useState(false);
 
+  // join핸들러. 미팅세션 만들고-> 미팅세션을 세팅
   const handleJoin = (joining) => {
     createMeetingSession(joining).then((it) => setMeetingSession(it));
   };
 
+  // 리액트컴포넌트가 렌더링 될때마다 실행되는 후크(hooks). 비동기처리에 사용
   useEffect(() => {
+    //미팅세션이 없는경우
     if (!meetingSession) {
       return;
     }
+
+    // 미팅세션이 존재하는경우 audioId, videoId를 활용해서 세팅하는 함수
     const setupInput = async ({ audioId, videoId } = {}) => {
       if (!audioId || !videoId) {
         throw new Error("No video nor audio input detected.");
       }
-
+      // 오디오
       if (audioId) {
         const audioInputDevices =
           await meetingSession.audioVideo.listAudioInputDevices();
@@ -37,7 +42,7 @@ function App() {
           await meetingSession.audioVideo.startAudioInput(audioId);
         }
       }
-
+      // 비디오
       if (videoId) {
         const videoInputDevices =
           await meetingSession.audioVideo.listVideoInputDevices();
@@ -47,12 +52,15 @@ function App() {
           await meetingSession.audioVideo.startVideoInput(
             videoId === "default" ? defaultVideoId : videoId
           );
+          // 스테이트 변경
           setStartedMediaInputs(true);
         }
       }
     };
 
+    // 인풋 설정하기
     setupInput({ audioId: "default", videoId: "default" }).then(() => {
+      // 옵저버
       const observer = {
         audioInputMuteStateChanged: (device, muted) => {
           console.warn(
@@ -69,6 +77,7 @@ function App() {
     
   }, [meetingSession]);
 
+  // 컨트롤 패널 리턴 (동적으로 출력)
   return (
     <Box
       width="100%"
@@ -90,31 +99,38 @@ function App() {
       )}
     </Box>
   );
+  // useEffect 종료
 }
 
+// useEffect 이전에 실행되는 미팅세션 만드는 함수
 async function createMeetingSession({ room }) {
+  // 파라미터 생성하고
   const params = new URLSearchParams([["room", room]]);
+  // 파라미터를 담아 서 get 요청
   const response = await axios.get("/chime-integration/meeting-session", {
     params,
   });
+  // response.data는 미팅세션에 대한 데이터를 담고 있음
   console.log(response.data);
 
+  // 바디에서 리스폰스를 분리해서 따로 정의
   const meetingResponse = response.data.meeting_response;
   const attendeeResponse = response.data.attendee_response;
 
-  // const { meetingResponse, attendeeResponse } = response.data;
-
+  // 리스폰스를 전달하여 configureation 생성
   const configuration = new MeetingSessionConfiguration(
     meetingResponse,
     attendeeResponse
   );
 
+  // 디폴트 미팅세션에 생성한 configuration, logger, deviceController할당하여 미팅세션 생성
   const meetingSession = new DefaultMeetingSession(
     configuration,
     logger,
     deviceController
   );
 
+  // 미팅세션을 반환
   return meetingSession;
 }
 
@@ -130,6 +146,7 @@ function MainHeader() {
   );
 }
 
+// join하는 경우 실행되는 함수 -> 무조건 실행
 function MainJoiningMeeting({ onJoin }) {
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -193,6 +210,51 @@ function Controls({ meetingSession }) {
           onClick={() => meetingSession.audioVideo.stop()}
         >
           회의 종료
+        </Button>
+      </Box>
+
+      <Box component="section" textAlign="center" maxWidth="xs" marginBottom="5px">
+        <Button
+          type="button"
+          style={{
+            borderRadius: 5,
+            backgroundColor: "#265e9a",
+            fontSize: "10px",
+            color: "white",
+            boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 2px 2px rgba(0,0,0,0.23)",
+            marginTop: "10px"
+          }}
+          onClick={() => function(){}}
+        >
+          S3에 비디오 저장
+        </Button>
+        <Button
+          type="button"
+          style={{
+            borderRadius: 5,
+            backgroundColor: "#265e9a",
+            fontSize: "10px",
+            color: "white",
+            boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 2px 2px rgba(0,0,0,0.23)",
+            marginTop: "10px"
+          }}
+          onClick={() => function(){}}
+        >
+          잡음제거
+        </Button>
+        <Button
+          type="button"
+          style={{
+            borderRadius: 5,
+            backgroundColor: "#265e9a",
+            fontSize: "10px",
+            color: "white",
+            boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 2px 2px rgba(0,0,0,0.23)",
+            marginTop: "10px"
+          }}
+          onClick={() => function(){}}
+        >
+          Transcript
         </Button>
       </Box>
     </Container>
