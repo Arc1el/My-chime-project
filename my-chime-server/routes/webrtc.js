@@ -6,7 +6,8 @@ const asyncify = require('asyncify-express');
 
 // 비동기 처리를 위해 asyncify로 라우터 전체를 래핑
 var router = asyncify(express.Router());
-meetings = {};
+var meetings = {};
+var pipelines = {};
 
 // 차임 미팅 세션 요청
 router.get('/chime-integration/meeting-session', async function(req, res, next) {
@@ -76,7 +77,11 @@ router.post('/store_s3', async function(req, res, next) {
     };
     const command = new CreateMediaCapturePipelineCommand(input);
     const response = await client.send(command);
-    console.log("response : ", response);
+    console.log("s3 response : ", response);
+    console.log("MediaPipelineId : ", response.MediaCapturePipeline.MediaPipelineId);
+    pipelines[meeting_id] = response.MediaCapturePipeline.MediaPipelineId;
+
+    console.log("pipelines : ", pipelines);
     res.sendStatus(200);
   }
   catch(e){
