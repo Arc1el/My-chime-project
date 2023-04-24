@@ -1,5 +1,6 @@
 var express = require('express');
 const AWS = require('aws-sdk');
+const { ChimeSDKMediaPipelinesClient, CreateMediaCapturePipelineCommand } = require("@aws-sdk/client-chime-sdk-media-pipelines");
 const { v4: uuidv4 } = require('uuid');
 const asyncify = require('asyncify-express');
 
@@ -56,6 +57,31 @@ router.get('/chime-integration/meeting-session', async function(req, res, next) 
     return res.status(500).json({
       message: "Internal server error."
     });
+  }
+});
+
+router.post('/store_s3', async function(req, res, next) {
+    // 리전설정
+    console.log(req.body);
+    const meeting_id = req.body.meetingId;
+    
+    try{
+      const client = new ChimeSDKMediaPipelinesClient({region: 'us-east-1'});
+      const input = { // CreateMediaCapturePipelineRequest
+      SourceType: "ChimeSdkMeeting", // required
+      SourceArn: "arn:aws:chime::759320821027:meeting:" + meeting_id, // required
+      SinkType: "S3Bucket", // required
+      SinkArn: "arn:aws:s3:::chime-record-hmkim/video/", // required
+      Region: "us-east-1", // required
+    };
+    const command = new CreateMediaCapturePipelineCommand(input);
+    const response = await client.send(command);
+    console.log("response : ", response);
+    res.sendStatus(200);
+  }
+  catch(e){
+    console.log(e);
+    res.sendStatus(500);
   }
 });
 
