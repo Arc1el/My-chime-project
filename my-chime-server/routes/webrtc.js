@@ -3,6 +3,7 @@ const AWS = require('aws-sdk');
 const { v4: uuidv4 } = require('uuid');
 const asyncify = require('asyncify-express');
 
+// 비동기 처리를 위해 asyncify로 라우터 전체를 래핑
 var router = asyncify(express.Router());
 meetings = {};
 
@@ -11,11 +12,12 @@ router.get('/chime-integration/meeting-session', async function(req, res, next) 
   try {
     // 리전설정
     const meetings_control_region = "us-east-1"
-    const meetings_media_region = "ap-northeast-2"
+    const meetings_media_region = "us-east-1"
     const chime_endpoint = "https://meetings-chime." + meetings_control_region + ".amazonaws.com"
 
     // ChimeSDKMMEetings 사용하여 객체 생성
     const chime = new AWS.ChimeSDKMeetings({ region: meetings_control_region });
+    
     // 엔드포인트 설정
     chime.endpoint = new AWS.Endpoint(chime_endpoint);
 
@@ -46,8 +48,9 @@ router.get('/chime-integration/meeting-session', async function(req, res, next) 
     }).promise();
 
     console.log("attendee response : ", attendee_response);
-    
+
     // front에 미팅리스폰스, 참가자 리스폰스 send
+    startRecording();
     res.send({ attendee_response, meeting_response });
   } catch (error) {
     console.log(error);
