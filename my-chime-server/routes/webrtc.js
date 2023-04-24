@@ -50,7 +50,6 @@ router.get('/chime-integration/meeting-session', async function(req, res, next) 
     console.log("attendee response : ", attendee_response);
 
     // front에 미팅리스폰스, 참가자 리스폰스 send
-    startRecording();
     res.send({ attendee_response, meeting_response });
   } catch (error) {
     console.log(error);
