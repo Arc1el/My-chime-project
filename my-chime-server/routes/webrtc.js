@@ -76,11 +76,11 @@ router.post('/store_s3', async function(req, res, next) {
     if(record_start){
       try{
         const client = new ChimeSDKMediaPipelinesClient({region: 'us-east-1'});
-        const input = { // CreateMediaCapturePipelineRequest
-          SourceType: "ChimeSdkMeeting", // required
-          SourceArn: "arn:aws:chime::759320821027:meeting:" + meeting_id, // required
-          SinkType: "S3Bucket", // required
-          SinkArn: "arn:aws:s3:::chime-record-hmkim/records-" + meeting_id, // required
+        const input = { 
+          SourceType: "ChimeSdkMeeting", 
+          SourceArn: "arn:aws:chime::759320821027:meeting:" + meeting_id, 
+          SinkType: "S3Bucket", 
+          SinkArn: "arn:aws:s3:::chime-record-hmkim/records-" + meeting_id, 
           ChimeSdkMeetingConfiguration: {
             "ArtifactsConfiguration": {
               "Audio": {
@@ -101,62 +101,59 @@ router.post('/store_s3', async function(req, res, next) {
         const response = await client.send(command);
         console.log("create response : ", response);
         console.log("MediaPipelineId : ", response.MediaCapturePipeline.MediaPipelineId);
-        pipelines[meeting_id] = response.MediaCapturePipeline.MediaPipelineId;
-
+        const media_pipeline_id = response.MediaCapturePipeline.MediaPipelineId;
+        const media_pipeline_arn = response.MediaCapturePipeline.MediaPipelineArn;
+        pipelines[meeting_id] = media_pipeline_id;
         console.log("pipelines : ", pipelines);
         
 
-        const concat_input = { // CreateMediaConcatenationPipelineRequest
-          Sources: [ // ConcatenationSourceList // required
-            { // ConcatenationSource
-              Type: "MediaCapturePipeline", // required
-              MediaCapturePipelineSourceConfiguration: { // MediaCapturePipelineSourceConfiguration
-                MediaPipelineArn: response.MediaCapturePipeline.MediaPipelineId, // required
-                ChimeSdkMeetingConfiguration: { // ChimeSdkMeetingConcatenationConfiguration
-                  ArtifactsConfiguration: { // ArtifactsConcatenationConfiguration
-                    Audio: { // AudioConcatenationConfiguration
-                      State: "Enabled", // required
+        const concat_input = { 
+          Sources: [
+            { 
+              Type: "MediaCapturePipeline", 
+              MediaCapturePipelineSourceConfiguration: { 
+                MediaPipelineArn: media_pipeline_arn,
+                ChimeSdkMeetingConfiguration: { 
+                  ArtifactsConfiguration: { 
+                    Audio: { 
+                      State: "Enabled",
                     },
-                    Video: { // VideoConcatenationConfiguration
-                      State: "Enabled", // required
+                    Video: {
+                      State: "Enabled", 
                     },
-                    Content: { // ContentConcatenationConfiguration
-                      State: "Enabled", // required
+                    Content: { 
+                      State: "Enabled", 
                     },
-                    DataChannel: { // DataChannelConcatenationConfiguration
-                      State: "Disabled", // required
+                    DataChannel: { 
+                      State: "Disabled", 
                     },
-                    TranscriptionMessages: { // TranscriptionMessagesConcatenationConfiguration
-                      State: "Disabled", // required
+                    TranscriptionMessages: { 
+                      State: "Disabled", 
                     },
-                    MeetingEvents: { // MeetingEventsConcatenationConfiguration
-                      State: "Disabled", // required
+                    MeetingEvents: { 
+                      State: "Disabled", 
                     },
-                    CompositedVideo: { // CompositedVideoConcatenationConfiguration
-                      State: "Disabled", // required
+                    CompositedVideo: { 
+                      State: "Disabled", 
                     },
                   },
                 },
               },
             },
           ],
-          Sinks: [ // ConcatenationSinkList // required
-            { // ConcatenationSink
-              Type: "S3Bucket", // required
-              S3BucketSinkConfiguration: { // S3BucketSinkConfiguration
-                Destination: "STRING_VALUE", // required
+          Sinks: [  
+            { 
+              Type: "S3Bucket", 
+              S3BucketSinkConfiguration: { 
+                Destination: "arn:aws:s3:::chime-concat-hmkim", 
               },
-            },
-          ],
-          ClientRequestToken: "STRING_VALUE",
-          Tags: [ // TagList
-            { // Tag
-              Key: "STRING_VALUE", // required
-              Value: "STRING_VALUE", // required
             },
           ],
         };
         const concat_command = new CreateMediaConcatenationPipelineCommand(concat_input);
+        const concat_response = await client.send(concat_command);
+
+        console.log("concat_response : ", concat_response);
         res.sendStatus(200);
       }catch(e){
         console.log(e);
@@ -168,13 +165,13 @@ router.post('/store_s3', async function(req, res, next) {
         console.log("delete the mediapipeline : ", mediapipeline_id);
         
         const client = new ChimeSDKMediaPipelinesClient({region: 'us-east-1'});
-        const input = { // DeleteMediaCapturePipelineRequest
-          MediaPipelineId: mediapipeline_id, // required
+        const input = { 
+          MediaPipelineId: mediapipeline_id, 
         };
         const command = new DeleteMediaCapturePipelineCommand(input);
         const response = await client.send(command);
         console.log("delete response : ", response);
-        
+
         res.sendStatus(200);
       }catch(e){
         console.log(e);
