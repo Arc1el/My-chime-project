@@ -19,14 +19,14 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "export PORT=80 && cross-env GENERATE_SOURCEMAP=false react-scripts start",
+    "start": "export PORT=3000 && cross-env HTTPS=true GENERATE_SOURCEMAP=false react-scripts start",
     "start2": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "_asdf": "http://mychimealb-1833942194.ap-northeast-2.elb.amazonaws.com:3001/",
-  "proxy": "http://localhost:3001/",
+  "proxy": "http://mychimealb-1833942194.ap-northeast-2.elb.amazonaws.com:3001/",
+  "_1proxy": "http://localhost:3001/",
   "eslintConfig": {
     "extends": [
       "react-app",
