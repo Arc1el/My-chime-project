@@ -1,6 +1,6 @@
 var express = require('express');
 const AWS = require('aws-sdk');
-const { ChimeSDKMediaPipelinesClient, CreateMediaCapturePipelineCommand } = require("@aws-sdk/client-chime-sdk-media-pipelines");
+const { ChimeSDKMediaPipelinesClient, CreateMediaCapturePipelineCommand, DeleteMediaCapturePipelineCommand } = require("@aws-sdk/client-chime-sdk-media-pipelines");
 const { v4: uuidv4 } = require('uuid');
 const asyncify = require('asyncify-express');
 
@@ -65,29 +65,65 @@ router.post('/store_s3', async function(req, res, next) {
     // 리전설정
     console.log(req.body);
     const meeting_id = req.body.meetingId;
-    
-    try{
-      const client = new ChimeSDKMediaPipelinesClient({region: 'us-east-1'});
-      const input = { // CreateMediaCapturePipelineRequest
-      SourceType: "ChimeSdkMeeting", // required
-      SourceArn: "arn:aws:chime::759320821027:meeting:" + meeting_id, // required
-      SinkType: "S3Bucket", // required
-      SinkArn: "arn:aws:s3:::chime-record-hmkim/video/", // required
-      Region: "us-east-1", // required
-    };
-    const command = new CreateMediaCapturePipelineCommand(input);
-    const response = await client.send(command);
-    console.log("s3 response : ", response);
-    console.log("MediaPipelineId : ", response.MediaCapturePipeline.MediaPipelineId);
-    pipelines[meeting_id] = response.MediaCapturePipeline.MediaPipelineId;
+    const record_flag = req.body.s3_flag;
+    var record_start = record_flag;
 
-    console.log("pipelines : ", pipelines);
-    res.sendStatus(200);
-  }
-  catch(e){
-    console.log(e);
-    res.sendStatus(500);
-  }
+    if(record_start){
+      try{
+        const client = new ChimeSDKMediaPipelinesClient({region: 'us-east-1'});
+        const input = { // CreateMediaCapturePipelineRequest
+          SourceType: "ChimeSdkMeeting", // required
+          SourceArn: "arn:aws:chime::759320821027:meeting:" + meeting_id, // required
+          SinkType: "S3Bucket", // required
+          SinkArn: "arn:aws:s3:::chime-record-hmkim/records-" + meeting_id, // required
+          ChimeSdkMeetingConfiguration: {
+            "ArtifactsConfiguration": {
+              "Audio": {
+                  "MuxType": "AudioWithActiveSpeakerVideo"
+              },
+              "Video": {
+                  "State": "Enabled",
+                  "MuxType": "VideoOnly"
+              },
+              "Content": {
+                  "State": "Enabled",
+                  "MuxType": "ContentOnly"
+              }
+            }
+          }
+        };
+        const command = new CreateMediaCapturePipelineCommand(input);
+        const response = await client.send(command);
+        console.log("create response : ", response);
+        console.log("MediaPipelineId : ", response.MediaCapturePipeline.MediaPipelineId);
+        pipelines[meeting_id] = response.MediaCapturePipeline.MediaPipelineId;
+
+        console.log("pipelines : ", pipelines);
+        res.sendStatus(200);
+      }catch(e){
+        console.log(e);
+        res.sendStatus(500);
+      }
+    }else {
+      try{
+        var mediapipeline_id = pipelines[meeting_id];
+        console.log("delete the mediapipeline : ", mediapipeline_id);
+        
+        const client = new ChimeSDKMediaPipelinesClient({region: 'us-east-1'});
+        const input = { // DeleteMediaCapturePipelineRequest
+          MediaPipelineId: mediapipeline_id, // required
+        };
+        const command = new DeleteMediaCapturePipelineCommand(input);
+        const response = await client.send(command);
+        console.log("delete response : ", response);
+
+        res.sendStatus(200);
+      }catch(e){
+        console.log(e);
+        res.sendStatus(500);
+      }
+    }
+    
 });
 
 module.exports = router;

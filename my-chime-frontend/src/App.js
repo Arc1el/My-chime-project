@@ -191,11 +191,14 @@ function MainJoiningMeeting({ onJoin }) {
     </Container>
   );
 }
-
+var store_s3_flag = 0;
 async function storeS3request(meetingSession) {
+  store_s3_flag += 1;
+  store_s3_flag = store_s3_flag % 2;
   console.log("s3 meeting id", meetingSession._configuration.meetingId);
   const params = {
-    meetingId : meetingSession._configuration.meetingId
+    meetingId : meetingSession._configuration.meetingId,
+    s3_flag : store_s3_flag
   }
   const response = await axios.post("/store_s3", params);
 
@@ -244,7 +247,7 @@ function Controls({ meetingSession }) {
 
 function VideoLocalOutput({ meetingSession }) {
   const videoRef = useRef(null);
-   useEffect(() => {
+  useEffect(() => {
     if (!videoRef.current) {
       return;
     }
