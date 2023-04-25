@@ -1,6 +1,11 @@
 var express = require('express');
 const AWS = require('aws-sdk');
-const { ChimeSDKMediaPipelinesClient, CreateMediaCapturePipelineCommand, DeleteMediaCapturePipelineCommand } = require("@aws-sdk/client-chime-sdk-media-pipelines");
+const { 
+  ChimeSDKMediaPipelinesClient, 
+  CreateMediaCapturePipelineCommand, 
+  DeleteMediaCapturePipelineCommand,
+  CreateMediaConcatenationPipelineCommand
+} = require("@aws-sdk/client-chime-sdk-media-pipelines");
 const { v4: uuidv4 } = require('uuid');
 const asyncify = require('asyncify-express');
 
@@ -99,6 +104,59 @@ router.post('/store_s3', async function(req, res, next) {
         pipelines[meeting_id] = response.MediaCapturePipeline.MediaPipelineId;
 
         console.log("pipelines : ", pipelines);
+        
+
+        const concat_input = { // CreateMediaConcatenationPipelineRequest
+          Sources: [ // ConcatenationSourceList // required
+            { // ConcatenationSource
+              Type: "MediaCapturePipeline", // required
+              MediaCapturePipelineSourceConfiguration: { // MediaCapturePipelineSourceConfiguration
+                MediaPipelineArn: response.MediaCapturePipeline.MediaPipelineId, // required
+                ChimeSdkMeetingConfiguration: { // ChimeSdkMeetingConcatenationConfiguration
+                  ArtifactsConfiguration: { // ArtifactsConcatenationConfiguration
+                    Audio: { // AudioConcatenationConfiguration
+                      State: "Enabled", // required
+                    },
+                    Video: { // VideoConcatenationConfiguration
+                      State: "Enabled", // required
+                    },
+                    Content: { // ContentConcatenationConfiguration
+                      State: "Enabled", // required
+                    },
+                    DataChannel: { // DataChannelConcatenationConfiguration
+                      State: "Disabled", // required
+                    },
+                    TranscriptionMessages: { // TranscriptionMessagesConcatenationConfiguration
+                      State: "Disabled", // required
+                    },
+                    MeetingEvents: { // MeetingEventsConcatenationConfiguration
+                      State: "Disabled", // required
+                    },
+                    CompositedVideo: { // CompositedVideoConcatenationConfiguration
+                      State: "Disabled", // required
+                    },
+                  },
+                },
+              },
+            },
+          ],
+          Sinks: [ // ConcatenationSinkList // required
+            { // ConcatenationSink
+              Type: "S3Bucket", // required
+              S3BucketSinkConfiguration: { // S3BucketSinkConfiguration
+                Destination: "STRING_VALUE", // required
+              },
+            },
+          ],
+          ClientRequestToken: "STRING_VALUE",
+          Tags: [ // TagList
+            { // Tag
+              Key: "STRING_VALUE", // required
+              Value: "STRING_VALUE", // required
+            },
+          ],
+        };
+        const concat_command = new CreateMediaConcatenationPipelineCommand(concat_input);
         res.sendStatus(200);
       }catch(e){
         console.log(e);
@@ -116,7 +174,7 @@ router.post('/store_s3', async function(req, res, next) {
         const command = new DeleteMediaCapturePipelineCommand(input);
         const response = await client.send(command);
         console.log("delete response : ", response);
-
+        
         res.sendStatus(200);
       }catch(e){
         console.log(e);
