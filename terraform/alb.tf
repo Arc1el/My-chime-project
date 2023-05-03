@@ -15,9 +15,7 @@ module "alb_backend" {
       name_prefix      = "tf-"
       backend_protocol = "HTTP"
       backend_port     = 3001
-      target_type      = "instance"
-      targets = {
-      }
+      target_type      = "ip"
     }
   ]
 
