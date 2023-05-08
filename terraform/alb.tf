@@ -14,14 +14,14 @@ module "alb_backend" {
     {
       name_prefix      = "tf-"
       backend_protocol = "HTTP"
-      backend_port     = 3001
+      backend_port     = 80
       target_type      = "ip"
     }
   ]
 
   http_tcp_listeners = [
     {
-      port               = 3001
+      port               = 80
       protocol           = "HTTP"
       target_group_index = 0
     }
@@ -41,8 +41,8 @@ module "alb_sg_backend" {
 
   ingress_with_cidr_blocks = [
     {
-      from_port   = 3001
-      to_port     = 3001
+      from_port   = 80
+      to_port     = 80
       protocol    = "tcp"
       description = "User-service ports"
       cidr_blocks = "0.0.0.0/0"
